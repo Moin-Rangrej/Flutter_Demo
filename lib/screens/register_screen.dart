@@ -1,75 +1,56 @@
 import 'package:chat_bot_app/components/Textfield.dart';
 import 'package:chat_bot_app/components/button.dart';
 import 'package:chat_bot_app/components/label.dart';
-import 'package:chat_bot_app/screens/home_screen.dart';
+import 'package:chat_bot_app/screens/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class Login extends StatefulWidget {
-  const Login({super.key});
+class Register extends StatefulWidget {
+  const Register({super.key});
 
   @override
-  State<Login> createState() => _LoginState();
+  State<Register> createState() => _RegisterState();
 }
 
-class _LoginState extends State<Login> {
+class _RegisterState extends State<Register> {
   TextEditingController usernameController = TextEditingController();
+  TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   final _formkey = GlobalKey<FormState>();
-  bool? isChecked = false;
-
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      final SharedPreferences pref = await SharedPreferences.getInstance();
-      final uname = pref.getString("uname");
-      final password = pref.getString("password");
-      usernameController.text = uname ?? "";
-      passwordController.text = password ?? "";
-    });
-  }
-
-  void onPressLogin() async {
-    try {
-      FocusScope.of(context).unfocus();
-      bool isValidForm = _formkey.currentState!.validate();
-      if (isValidForm) {
-        if (isChecked == true) {
-          final SharedPreferences pref = await SharedPreferences.getInstance();
-          pref.setString("uname", usernameController.text);
-          pref.setString("password", passwordController.text);
-        }
-        usernameController.clear();
-        passwordController.clear();
-        Navigator.of(context)
-            .push(MaterialPageRoute(builder: (context) => const HomeScreen()));
-      } else {
-        const snackBar = SnackBar(content: Text("fill all the fields"));
-        ScaffoldMessenger.of(context).showSnackBar(snackBar);
-      }
-    } catch (e) {
-      final snackBar =
-          SnackBar(content: Text("SomeThing went wrong ${e.toString()}"));
-      ScaffoldMessenger.of(context).showSnackBar(snackBar);
-    }
-  }
-
-  @override
-  void dispose() {
-    usernameController.dispose();
-    passwordController.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
 
+    void onPressRegister() async {
+      bool isValidForm = _formkey.currentState!.validate();
+      if (isValidForm) {
+        usernameController.clear();
+        passwordController.clear();
+        emailController.clear();
+        FocusScope.of(context).unfocus();
+        Navigator.of(context)
+            .push(MaterialPageRoute(builder: (context) => const Login()));
+        final SharedPreferences pref = await SharedPreferences.getInstance();
+        pref.setBool("isLogin", true);
+      } else {
+        const snackBar = SnackBar(content: Text("fill all the fields"));
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      }
+    }
+
+    @override
+    void dispose() {
+      usernameController.dispose();
+      passwordController.dispose();
+      emailController.dispose();
+      super.dispose();
+    }
+
     return Scaffold(
       appBar: AppBar(
-        title: const Label(text: "Login"),
+        title: const Label(text: "Register"),
         centerTitle: true,
       ),
       body: SafeArea(
@@ -81,12 +62,31 @@ class _LoginState extends State<Login> {
               children: [
                 CustomTextfield(
                   controller: usernameController,
-                  hintText: "Enter username:",
+                  hintText: "Enter UserName:",
                   textInputAction: TextInputAction.next,
                   keyboardType: TextInputType.text,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return "please enter the name";
+                    }
+                    return null;
+                  },
+                ),
+                CustomTextfield(
+                  controller: emailController,
+                  hintText: "Enter email:",
+                  textInputAction: TextInputAction.next,
+                  keyboardType: TextInputType.emailAddress,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return "please Enter Email";
+                    } else {
+                      bool emailValid = RegExp(
+                              r'^.+@[a-zA-Z]+\.{1}[a-zA-Z]+(\.{0,1}[a-zA-Z]+)$')
+                          .hasMatch(value);
+                      if (!emailValid) {
+                        return "Please Enter Valid Email";
+                      }
                     }
                     return null;
                   },
@@ -104,16 +104,7 @@ class _LoginState extends State<Login> {
                     return null;
                   },
                 ),
-                CheckboxListTile.adaptive(
-                    title: const Text("Remember me"),
-                    controlAffinity: ListTileControlAffinity.platform,
-                    value: isChecked,
-                    onChanged: (bool? val) {
-                      setState(() {
-                        isChecked = val;
-                      });
-                    }),
-                CustomButton(onPress: onPressLogin, title: "login")
+                CustomButton(onPress: onPressRegister, title: "Register")
               ],
             )),
       )),

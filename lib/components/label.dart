@@ -9,6 +9,10 @@ class Label extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Text(text,
-        style: style ?? const TextStyle(fontSize: 24, fontWeight: FontWeight.w500, fontFamily: "Lubri"));
+        style: style ??
+            const TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.w500,
+                fontFamily: "Ubuntu"));
   }
 }

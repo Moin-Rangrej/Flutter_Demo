@@ -1,14 +1,17 @@
+import 'package:chat_bot_app/provider/Products/category_provider.dart';
 import 'package:chat_bot_app/provider/counter.dart';
 import 'package:chat_bot_app/screens/login_screen.dart';
+import 'package:chat_bot_app/screens/product_category.dart';
 import 'package:chat_bot_app/screens/register_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
-  runApp(MultiProvider(
-      providers: [ChangeNotifierProvider(create: (_) => Counter())],
-      child: const MyApp()));
+  runApp(MultiProvider(providers: [
+    ChangeNotifierProvider(create: (_) => Counter()),
+    ChangeNotifierProvider(create: (_) => CategoryProvider()),
+  ], child: const MyApp()));
 }
 
 class MyApp extends StatefulWidget {
@@ -52,6 +55,7 @@ class _MyAppState extends State<MyApp> {
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
           useMaterial3: true,
         ),
-        home: isLogin ? const Login() : const Register());
+        home:
+            const ProductCategory()); //isLogin ? const Login() : const Register());
   }
 }

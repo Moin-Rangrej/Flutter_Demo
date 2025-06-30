@@ -7,6 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'screens/demo1.dart';
+
 void main() {
   runApp(MultiProvider(providers: [
     ChangeNotifierProvider(create: (_) => Counter()),
@@ -56,6 +58,6 @@ class _MyAppState extends State<MyApp> {
           useMaterial3: true,
         ),
         home:
-            const ProductCategory()); //isLogin ? const Login() : const Register());
+            const Demo1()); //isLogin ? const Login() : const Register());
   }
 }
